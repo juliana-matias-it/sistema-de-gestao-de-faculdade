@@ -1,7 +1,7 @@
-﻿using sistema_de_gestao_de_faculdade;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using static System.Console;
 using System.Linq;
+using sistema_de_gestao_de_faculdade.Entity;
 public class FaculdadeService
 {
     private List<Curso> _cursos;
@@ -11,18 +11,18 @@ public class FaculdadeService
         _cursos = new List<Curso>();
     }
 
-    public bool CadastrarCurso(string codigo, string nome, TipoCurso tipoCurso)
+    public void CadastrarCurso(string codigo, string nome, TipoCurso tipoCurso)
     {
         if (_cursos.Any(curso => curso.Codigo == codigo))
         {
-            return false;
+            throw new InvalidOperationException(
+                "Curso já cadastrado."
+            );
         }
 
         Curso curso = new Curso(codigo, nome, tipoCurso);
 
         _cursos.Add(curso);
-
-        return true;
     }
 
     public void ConsultarCursos()
