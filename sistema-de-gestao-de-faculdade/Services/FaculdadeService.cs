@@ -2,31 +2,34 @@
 using System.Collections.Generic;
 using static System.Console;
 using System.Linq;
-
-
 public class FaculdadeService
 {
     private List<Curso> _cursos;
+
     public FaculdadeService()
     {
         _cursos = new List<Curso>();
     }
-    public void CadastrarCurso(string codigo, string nome, TipoCurso tipoCurso)
+
+    public bool CadastrarCurso(string codigo, string nome, TipoCurso tipoCurso)
     {
         if (_cursos.Any(curso => curso.Codigo == codigo))
         {
-            Console.WriteLine("Já existe um curso com esse código.");
-            return;
+            return false;
         }
 
         Curso curso = new Curso(codigo, nome, tipoCurso);
+
         _cursos.Add(curso);
+
+        return true;
     }
+
     public void ConsultarCursos()
     {
         if (_cursos.Count == 0)
         {
-            Console.WriteLine("Nenhum curso cadastrado.");
+            WriteLine("Nenhum curso cadastrado.");
             return;
         }
 
