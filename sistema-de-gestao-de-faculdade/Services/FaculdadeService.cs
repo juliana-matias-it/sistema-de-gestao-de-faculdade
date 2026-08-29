@@ -2,8 +2,8 @@
 
 public class FaculdadeService
 {
-    private List<Pessoa> pessoas;
-    private List<Boletim> boletins;
+    public List<Pessoa> pessoas;
+    public List<Boletim> boletins;
 
     public FaculdadeService()
     {
@@ -11,7 +11,7 @@ public class FaculdadeService
         boletins = new List<Boletim>();
     }
 
-    public void consultarBoletim(List<Matricula> matriculas, Curso curso)
+    public void ConsultarBoletim(List<Matricula> matriculas, Curso curso)
     {
        for(int i = 0; i < matriculas.Count; i++)
         {
@@ -31,7 +31,7 @@ public class FaculdadeService
         }
     }
 
-    public void consultarPessoa()
+    public void ConsultarPessoa()
     {
        for(int i = 0; i < pessoas.Count; i++)
         {
@@ -47,7 +47,7 @@ public class FaculdadeService
         }
     }
     
-    public void LançarNota(string numeroMatricula, string codigoCurso, string codigoDisciplina, decimal nota)
+    public void LancarNota(string numeroMatricula, string codigoCurso, string codigoDisciplina, decimal nota)
     {
         for(int i = 0; i < boletins.Count; i++)
         {

@@ -5,8 +5,12 @@ public abstract class Pessoa
     public string CPF { get; set; }
     public string Email { get; set; }
     
-    public Pessoa(string nome, string cpf, string email)
+    public void ValidarPessoa(string nome, string cpf, string email)
     {
+        ValidarNome(nome);
+        ValidarCPF(cpf);
+        ValidarEmail(email);
+
         Nome = nome;
         CPF = cpf;
         Email = email;
