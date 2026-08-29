@@ -2,6 +2,7 @@ public class FaculdadeService
 {
     private List<Professor> _professores = new();
     private List<Disciplina> _disciplinas = new();
+    private List<Curso> _cursos = new();
 
     public void CadastrarProfessor(
         string nome,
@@ -38,7 +39,7 @@ public class FaculdadeService
 
         Professor? professor = _professores.FirstOrDefault(p => p.Registro == registroProfessor);
 
-        if ( professor == null )
+        if ( professor is null )
             throw new InvalidOperationException("O professor não esta cadastrado no sistema");
 
         Disciplina disciplina = new Disciplina(
@@ -51,4 +52,21 @@ public class FaculdadeService
         _disciplinas.Add(disciplina);
     }
 
+    public void VincularDisciplinaAoCurso(
+        string codigoCurso, 
+        string codigoDisciplina)
+    {
+        Curso? curso = _cursos.FirstOrDefault(c => c.Codigo == codigoCurso);
+
+        if (curso is null)
+            throw new InvalidOperationException("O curso não esta cadastrado no sistema");
+
+
+        Disciplina? disciplina = _disciplinas.FirstOrDefault(d => d.Codigo == codigoDisciplina);
+
+        if (disciplina is null)
+            throw new InvalidOperationException("A disciplina não esta cadastrada no sistema");
+
+        curso.AdicionarDisciplina(disciplina);
+    }
 }
