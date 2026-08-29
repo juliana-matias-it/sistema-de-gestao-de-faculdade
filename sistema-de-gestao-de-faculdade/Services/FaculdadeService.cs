@@ -11,20 +11,36 @@ public class FaculdadeService
         boletins = new List<Boletim>();
     }
 
-    public void consultarBoletim(string nomeroMatricula, string codigoCurso)
+    public void consultarBoletim(List<Matricula> matriculas, Curso curso)
     {
-        if (string.IsNullOrEmpty(nomeroMatricula) || string.IsNullOrEmpty(codigoCurso))
+       for(int i = 0; i < matriculas.Count; i++)
         {
-            throw new ArgumentException("Número de matrícula e código do curso não podem ser nulos ou vazios.");
+            var matricula = matriculas[i];
+            if (matricula == null)
+            {
+                throw new InvalidOperationException("Matrícula não encontrada.");
+            }
         }
-        if (boletins.Count == 0)
+        if (matriculas == null || matriculas.Count == 0)
         {
-            throw new InvalidOperationException("Não há boletins cadastrados.");
+            throw new ArgumentException("Lista de matrículas não pode ser nula ou vazia.");
+        }
+        if (curso == null)
+        {
+            throw new ArgumentException("Curso não pode ser nulo.");
         }
     }
 
     public void consultarPessoa()
     {
+       for(int i = 0; i < pessoas.Count; i++)
+        {
+            var pessoa = pessoas[i];
+            if (pessoa == null)
+            {
+                throw new InvalidOperationException("Pessoa não encontrada.");
+            }
+        }
         if (pessoas.Count == 0)
         {
             throw new InvalidOperationException("Não há pessoas cadastradas.");
@@ -33,6 +49,15 @@ public class FaculdadeService
     
     public void LançarNota(string numeroMatricula, string codigoCurso, string codigoDisciplina, decimal nota)
     {
+        for(int i = 0; i < boletins.Count; i++)
+        {
+            var boletim = boletins[i];
+            if (boletim == null)
+            {
+                throw new InvalidOperationException("Boletim não encontrado.");
+            }
+        }
+       
         if (string.IsNullOrEmpty(numeroMatricula) || string.IsNullOrEmpty(codigoCurso) || string.IsNullOrEmpty(codigoDisciplina))
         {
             throw new ArgumentException("Número de matrícula, código do curso e código da disciplina não podem ser nulos ou vazios.");
