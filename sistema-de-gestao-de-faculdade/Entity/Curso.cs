@@ -10,6 +10,7 @@ namespace sistema_de_gestao_de_faculdade.Entity
         public string Nome { get; private set; }
         public TipoCurso TipoCurso { get; private set; }
         public List<Disciplina> disciplinas { get; private set; }
+
         public Curso(string codigo, string nome, TipoCurso tipoCurso)
         {
             Codigo = codigo;
@@ -21,6 +22,7 @@ namespace sistema_de_gestao_de_faculdade.Entity
         {
             if (disciplinas.Any(d => d.Codigo == disciplina.Codigo))            
                 throw new InvalidOperationException("Essa disciplina já está cadastrada a este curso!");            
+            
             disciplinas.Add(disciplina);
         }
     }
