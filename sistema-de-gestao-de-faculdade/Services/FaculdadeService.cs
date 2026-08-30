@@ -1,8 +1,50 @@
+using System.Collections.Generic;
+using System.Linq;
+using static System.Console;
+using sistema_de_gestao_de_faculdade.Entity;
+
 public class FaculdadeService
 {
-    private List<Professor> _professores = new();
-    private List<Disciplina> _disciplinas = new();
-    private List<Curso> _cursos = new();
+    private List<Professor> _professores;
+    private List<Disciplina> _disciplinas;
+    private List<Curso> _cursos;
+
+    public FaculdadeService()
+    {
+        _cursos = new List<Curso>();
+        _professores = new List<Professor>();
+        _disciplinas = new List<Disciplina>();
+    }
+
+    public void CadastrarCurso(string codigo, string nome, TipoCurso tipoCurso)
+    {
+        if (_cursos.Any(curso => curso.Codigo == codigo))
+        {
+            throw new InvalidOperationException("Curso já cadastrado.");
+        }
+
+        Curso curso = new Curso(codigo, nome, tipoCurso);
+
+        _cursos.Add(curso);
+    }
+
+    public void ConsultarCursos()
+    {
+        if (_cursos.Count == 0)
+        {
+            WriteLine("Nenhum curso cadastrado.");
+            return;
+        }
+
+        foreach (Curso curso in _cursos)
+        {
+            WriteLine("==============================");
+            WriteLine($"Código: {curso.Codigo}");
+            WriteLine($"Nome: {curso.Nome}");
+            WriteLine($"Tipo: {curso.TipoCurso}");
+            WriteLine("==============================");
+        }
+    }
 
     public void CadastrarProfessor(
         string nome,
@@ -30,17 +72,17 @@ public class FaculdadeService
 
     public void CadastrarDisciplina(
         string codigo,
-        string nome, 
-        int cargaHoraria, 
+        string nome,
+        int cargaHoraria,
         string registroProfessor)
     {
-        if( _disciplinas.Any(d => d.Codigo == codigo))
+        if (_disciplinas.Any(d => d.Codigo == codigo))
             throw new InvalidOperationException("Existe uma disciplina cadastrada com este código.");
 
         Professor? professor = _professores.FirstOrDefault(p => p.Registro == registroProfessor);
 
-        if ( professor is null )
-            throw new InvalidOperationException("O professor não esta cadastrado no sistema");
+        if (professor is null)
+            throw new InvalidOperationException("O professor não está cadastrado no sistema.");
 
         Disciplina disciplina = new Disciplina(
             codigo,
@@ -53,19 +95,19 @@ public class FaculdadeService
     }
 
     public void VincularDisciplinaAoCurso(
-        string codigoCurso, 
+        string codigoCurso,
         string codigoDisciplina)
     {
-        Curso? curso = _cursos.FirstOrDefault(c => c.Codigo == codigoCurso);
+        Curso? curso = _cursos
+            .FirstOrDefault(c => c.Codigo == codigoCurso);
 
         if (curso is null)
-            throw new InvalidOperationException("O curso não esta cadastrado no sistema");
-
+            throw new InvalidOperationException("O curso não está cadastrado no sistema.");
 
         Disciplina? disciplina = _disciplinas.FirstOrDefault(d => d.Codigo == codigoDisciplina);
 
         if (disciplina is null)
-            throw new InvalidOperationException("A disciplina não esta cadastrada no sistema");
+            throw new InvalidOperationException("A disciplina não está cadastrada no sistema.");
 
         curso.AdicionarDisciplina(disciplina);
     }
