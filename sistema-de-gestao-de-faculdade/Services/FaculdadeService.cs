@@ -4,6 +4,7 @@ public class FaculdadeService
 {
     public List<Pessoa> pessoas;
     public List<Boletim> boletins;
+    public List<Curso> cursos;
 
     public FaculdadeService()
     {
@@ -41,9 +42,10 @@ public class FaculdadeService
                 throw new InvalidOperationException("Pessoa não encontrada.");
             }
         }
-        if (pessoas.Count == 0)
+        Console.WriteLine("Nome\tCPF\tEmail");
+        foreach (var pessoa in pessoas)
         {
-            throw new InvalidOperationException("Não há pessoas cadastradas.");
+            Console.WriteLine($"{pessoa.Nome}\t{pessoa.CPF}\t{pessoa.Email}");
         }
     }
     
@@ -57,7 +59,26 @@ public class FaculdadeService
                 throw new InvalidOperationException("Boletim não encontrado.");
             }
         }
-       
+        for(int i = 0; i < cursos.Count; i++)
+        {
+            var curso = cursos[i];
+            if (curso == null)
+            {
+                throw new InvalidOperationException("Curso não encontrado.");
+            }
+        }
+        for(int i = 0; i < disciplinas.Count; i++)
+        {
+            var disciplina = disciplinas[i];
+            if (disciplina == null)
+            {
+                throw new InvalidOperationException("Disciplina não encontrada.");
+            }
+        }
+        if (nota < 0 || nota > 10)
+        {
+            throw new ArgumentOutOfRangeException("Nota deve estar entre 0 e 10.");
+        }
         if (string.IsNullOrEmpty(numeroMatricula) || string.IsNullOrEmpty(codigoCurso) || string.IsNullOrEmpty(codigoDisciplina))
         {
             throw new ArgumentException("Número de matrícula, código do curso e código da disciplina não podem ser nulos ou vazios.");

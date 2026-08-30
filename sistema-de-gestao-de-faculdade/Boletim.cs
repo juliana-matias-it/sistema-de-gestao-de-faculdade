@@ -10,6 +10,7 @@ public class Boletim
         disciplinas = new Dictionary<Disciplina, decimal>();
     }
     public void LancarNota(Disciplina disciplina, decimal nota)
+    
     {
        for(int i = 0; i < disciplinas.Count; i++)
         {
