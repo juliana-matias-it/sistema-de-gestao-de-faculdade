@@ -18,7 +18,7 @@ namespace sistema_de_gestao_de_faculdade.Entity
             TipoCurso = tipoCurso;
             List<Disciplina> disciplinas = new();
         }
-        public void AdicionaDisciplina(Disciplina disciplina)
+        public void AdicionarDisciplina(Disciplina disciplina)
         {
             if (disciplinas.Any(d => d.Codigo == disciplina.Codigo))            
                 throw new InvalidOperationException("Essa disciplina já está cadastrada a este curso!");            
