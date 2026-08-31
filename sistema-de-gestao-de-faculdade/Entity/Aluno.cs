@@ -25,6 +25,14 @@ namespace sistema_de_gestao_de_faculdade.Entity
             }
             return numeroMatricula;
         }
+
+        public void AdicionarMatricula(Matricula matricula)
+        {
+            if (Matriculas.Any(m => m.Curso.Codigo == matricula.Curso.Codigo))
+            {
+                throw new InvalidOperationException("O aluno já está matriculado neste curso");
+            }
+            Matriculas.Add(matricula);
+        }
     }
 }
-

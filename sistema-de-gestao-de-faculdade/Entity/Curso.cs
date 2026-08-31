@@ -9,21 +9,21 @@ namespace sistema_de_gestao_de_faculdade.Entity
         public string Codigo { get; private set; }
         public string Nome { get; private set; }
         public TipoCurso TipoCurso { get; private set; }
-        public List<Disciplina> disciplinas { get; private set; }
+        public List<Disciplina> Disciplinas { get; private set; }
 
         public Curso(string codigo, string nome, TipoCurso tipoCurso)
         {
             Codigo = codigo;
             Nome = nome;
             TipoCurso = tipoCurso;
-            List<Disciplina> disciplinas = new();
+            List<Disciplina> Disciplinas = new();
         }
         public void AdicionarDisciplina(Disciplina disciplina)
         {
-            if (disciplinas.Any(d => d.Codigo == disciplina.Codigo))            
-                throw new InvalidOperationException("Essa disciplina já está cadastrada a este curso!");            
-            
-            disciplinas.Add(disciplina);
+            if (Disciplinas.Any(d => d.Codigo == disciplina.Codigo))            
+                throw new InvalidOperationException("Essa disciplina já está cadastrada a este curso!");
+
+            Disciplinas.Add(disciplina);
         }
     }
 }

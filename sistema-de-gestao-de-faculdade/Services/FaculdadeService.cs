@@ -109,12 +109,41 @@ public class FaculdadeService
         }
 
         foreach (Curso curso in _cursos)
-        {
+        {            
             Console.WriteLine("==============================");
             Console.WriteLine($"Código: {curso.Codigo}");
             Console.WriteLine($"Nome: {curso.Nome}");
             Console.WriteLine($"Tipo: {curso.TipoCurso}");
             Console.WriteLine("==============================");
+            
+            if (!curso.Disciplinas.Any())
+            {
+                Console.WriteLine("Nenhuma disciplina vinculada.");
+            }
+            else
+            {
+                foreach(Disciplina disciplina in curso.Disciplinas)
+                {
+                    Console.WriteLine(disciplina.Nome);
+                    Console.WriteLine(disciplina.ProfessorResponsavel.Nome);
+                }                
+            }
+            List<Aluno> alunosMatriculadosCurso = _alunos
+                .Where(aluno => aluno.Matriculas
+                .Any(m => m.Curso.Codigo == curso.Codigo))
+                .ToList();
+           
+            if (alunosMatriculadosCurso.Count == 0)
+            {
+                Console.WriteLine("Nenhum aluno está matriculado.");
+            }
+            else
+            {
+                foreach(Aluno aluno in alunosMatriculadosCurso)
+                {
+                    Console.WriteLine($"{aluno.Nome}");
+                }
+            }
         }
 
        
