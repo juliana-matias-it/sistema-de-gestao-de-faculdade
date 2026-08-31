@@ -10,25 +10,24 @@ public class FaculdadeService
     private readonly List<Disciplina> _disciplinas;
     private readonly List<Curso> _cursos;
 
-    public List<Boletim> boletins;
-
     public FaculdadeService()
     {
         _alunos = new List<Aluno>();
         _professores = new List<Professor>();
         _disciplinas = new List<Disciplina>();
         _cursos = new List<Curso>();
-
-        boletins = new List<Boletim>();
     }
-
-    // MÉTODOS DA MAIN
 
     public void CadastrarAluno(Aluno aluno)
     {
         if (_alunos.Any(x => x.NumeroMatricula == aluno.NumeroMatricula))
         {
             throw new ArgumentException($"Número de matrícula {aluno.NumeroMatricula} já cadastrado. Informe um número de matrícula válido.");
+        }
+
+        if (_alunos.Any(x => x.CPF == aluno.CPF))
+        {
+            throw new ArgumentException($"CPF {aluno.CPF} já cadastrado. Informe um CPF válido.");
         }
 
         _alunos.Add(aluno);
@@ -121,7 +120,7 @@ public class FaculdadeService
 
     public void CadastrarProfessor(string nome, string cpf, string email, string registro, string especialidade)
     {
-        if (_professores.Any(p => p.Cpf == cpf))
+        if (_professores.Any(p => p.CPF == cpf))
         {
             throw new InvalidOperationException("Existe um professor cadastrado com este CPF.");
         }
@@ -131,7 +130,13 @@ public class FaculdadeService
             throw new InvalidOperationException("Existe um professor cadastrado com este registro.");
         }
 
-        Professor professor = new Professor(nome, cpf, email, registro, especialidade);
+        Professor professor = new Professor(
+            nome, 
+            cpf, 
+            email, 
+            registro, 
+            especialidade
+         );
 
         _professores.Add(professor);
     }
@@ -244,5 +249,27 @@ public class FaculdadeService
         {
             throw new ArgumentException("Número de matrícula, código do curso e código da disciplina não podem ser nulos ou vazios.");
         }
+    }
+
+    public void EnviarNotificacao(string cpf, string mensagem)
+    {
+        if (string.IsNullOrWhiteSpace(cpf))
+            throw new ArgumentException("O CPF deve ser informado.");
+
+        if (string.IsNullOrWhiteSpace(mensagem))
+            throw new ArgumentException("A mensagem deve ser informada.");
+
+        Pessoa? pessoa = _alunos.FirstOrDefault(a => a.CPF == cpf);
+
+        pessoa ??= _professores.FirstOrDefault(p => p.CPF == cpf);
+
+        if (pessoa is null)
+            throw new InvalidOperationException("Não foi encontrada nenhuma pessoa com este CPF.");
+
+        Console.WriteLine();
+        Console.WriteLine("===== NOTIFICAÇÃO =====");
+        Console.WriteLine($"Para: {pessoa.Nome}");
+        Console.WriteLine($"Mensagem: {mensagem}");
+        Console.WriteLine("=======================");
     }
 }
