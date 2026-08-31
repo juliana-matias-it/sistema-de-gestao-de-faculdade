@@ -1,11 +1,11 @@
 
 public abstract class Pessoa
 {
-    private string Nome { get; set; }
-    private string CPF { get; set; }
-    private string Email { get; set; }
+    public string Nome { get; private set; }
+    public string CPF { get; private set; }
+    public string Email { get; private set; }
 
-    protected void ValidarPessoa(string nome, string cpf, string email)
+    protected Pessoa(string nome, string cpf, string email)
     {
         ValidarNome(nome);
         ValidarCPF(cpf);

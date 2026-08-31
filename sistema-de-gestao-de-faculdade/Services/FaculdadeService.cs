@@ -196,18 +196,17 @@ public class FaculdadeService
 
     public void ConsultarPessoa()
     {
-       for(int i = 0; i < pessoas.Count; i++)
+      if (_alunos.Count == 0 && _professores.Count == 0)
         {
-            var pessoa = pessoas[i];
-            if (pessoa == null)
-            {
-                throw new InvalidOperationException("Pessoa não encontrada.");
-            }
+            throw new InvalidOperationException("Não há alunos ou professores cadastrados.");
         }
-        Console.WriteLine("Nome\tCPF\tEmail");
-        foreach (var pessoa in pessoas)
+        foreach (var aluno in _alunos)
         {
-            Console.WriteLine($"{pessoa.Nome}\t{pessoa.CPF}\t{pessoa.Email}");
+            Console.WriteLine($"Aluno: {aluno.Nome}, Matrícula: {aluno.NumeroMatricula} , Email: {aluno.Email}, CPF: {aluno.CPF}, curso: {aluno.Matriculas.FirstOrDefault()?.Curso.Nome ?? "Nenhum curso matriculado"}");
+        }
+        foreach (var professor in _professores)
+        {
+            Console.WriteLine($"Professor: {professor.Nome}, Registro: {professor.Registro} , Email: {professor.Email}, CPF: {professor.CPF}, Especialidade: {professor.Especialidade}");
         }
     }
     

@@ -1,57 +1,34 @@
-
-
-public class Boletim
-{
-    private Dictionary<Disciplina, decimal> disciplinas;
-   
-    public Boletim()
+    namespace sistema_de_gestao_de_faculdade.Entity
     {
-        disciplinas = new Dictionary<Disciplina, decimal>();
-    }
-    public void LancarNota(KeyValuePair<Disciplina, decimal> disciplinaNota, decimal nota)
-    
+    public class Boletim
     {
-        if (disciplinaNota.Key == null)
-        {
-            throw new ArgumentException("Disciplina não pode ser nula.");
-        }
-        if (nota < 0 || nota > 10)
-        {
-            throw new ArgumentOutOfRangeException("Nota deve estar entre 0 e 10.");
-        }
-        disciplinas[disciplinaNota.Key] = nota;
-    }
-    
-    public void ObterSituacao(Dictionary<Disciplina, decimal> disciplinas, TipoCurso tipoCurso)
-    {
+        public Dictionary<Disciplina, decimal> BoletimNotas { get; private set; }
         
-        foreach (var disciplina in disciplinas.Keys)
+        public Boletim()
         {
-            if (disciplinas[disciplina] < 6)
-            {
-                throw new InvalidOperationException($"Aluno reprovado na disciplina {disciplina.Nome}.");
-            }
+            BoletimNotas = new Dictionary<Disciplina, decimal>();
         }
-        if (tipoCurso == TipoCurso.Graduacao)
+
+        public decimal ObterNotas(Disciplina disciplina)
         {
-            foreach (var disciplina in disciplinas.Keys)
+            if(!BoletimNotas.TryGetValue(disciplina, out decimal nota))
             {
-                if (disciplinas[disciplina] < 7)
-                {
-                    throw new InvalidOperationException($"Aluno reprovado na disciplina {disciplina.Nome}.");
-                }
+                throw new ArgumentException($"Disciplina {disciplina.Nome} não encontrada no boletim.");
             }
+               
+            return nota;
         }
-        if (tipoCurso == TipoCurso.PosGraduacao)
+        public void RegistrarNota(Disciplina disciplina, decimal nota)
         {
-            foreach (var disciplina in disciplinas.Keys)
+            if (disciplina == null)
             {
-                if (disciplinas[disciplina] < 8)
-                {
-                    throw new InvalidOperationException($"Aluno reprovado na disciplina {disciplina.Nome}.");
-                }
+                throw new ArgumentException("Disciplina não pode ser nula.");
             }
-        } 
-        
+            if (nota < 0 || nota > 10)
+            {
+                throw new ArgumentOutOfRangeException("Nota deve estar entre 0 e 10.");
+            }
+            BoletimNotas[disciplina] = nota;
+        }
     }
-}
+    }
