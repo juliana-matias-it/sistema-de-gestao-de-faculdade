@@ -10,7 +10,6 @@ public class FaculdadeService
     private readonly List<Disciplina> _disciplinas;
     private readonly List<Curso> _cursos;
 
-    public List<Pessoa> pessoas;
     public List<Boletim> boletins;
 
     public FaculdadeService()
@@ -20,7 +19,6 @@ public class FaculdadeService
         _disciplinas = new List<Disciplina>();
         _cursos = new List<Curso>();
 
-        pessoas = new List<Pessoa>();
         boletins = new List<Boletim>();
     }
 
