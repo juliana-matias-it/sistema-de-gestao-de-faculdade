@@ -1,11 +1,11 @@
 
 public abstract class Pessoa
 {
-    public string Nome { get; set; }
-    public string CPF { get; set; }
-    public string Email { get; set; }
-        
-    public void ValidarPessoa(string nome, string cpf, string email)
+    public string Nome { get; private set; } 
+    public string CPF { get; private set; }
+    public string Email { get; private set; }
+
+    protected Pessoa(string nome, string cpf, string email)
     {
         ValidarNome(nome);
         ValidarCPF(cpf);
@@ -15,6 +15,7 @@ public abstract class Pessoa
         CPF = cpf;
         Email = email;
     }
+
    public void ValidarNome(string nome)
     {
         if (string.IsNullOrEmpty(nome))

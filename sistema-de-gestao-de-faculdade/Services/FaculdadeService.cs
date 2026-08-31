@@ -116,6 +116,8 @@ public class FaculdadeService
             Console.WriteLine($"Tipo: {curso.TipoCurso}");
             Console.WriteLine("==============================");
         }
+
+       
     }
 
     public void CadastrarProfessor(string nome, string cpf, string email, string registro, string especialidade)
@@ -178,77 +180,139 @@ public class FaculdadeService
 
         curso.AdicionarDisciplina(disciplina);
     }
-  
-    public void ConsultarBoletim(List<Matricula> matriculas, Curso curso)
+
+    public void LancarNota(
+        string numeroMatricula,
+        string codigoCurso,
+        string codigoDisciplina,
+        decimal nota)
     {
-       for(int i = 0; i < matriculas.Count; i++)
-        {
-            var matricula = matriculas[i];
-            if (matricula == null)
-            {
-                throw new InvalidOperationException("Matrícula não encontrada.");
-            }
-        }
-        if (matriculas == null || matriculas.Count == 0)
-        {
-            throw new ArgumentException("Lista de matrículas não pode ser nula ou vazia.");
-        }
-        if (curso == null)
-        {
-            throw new ArgumentException("Curso não pode ser nulo.");
-        }
+        Aluno? aluno = _alunos.FirstOrDefault(a => a.NumeroMatricula == numeroMatricula);
+
+        if (aluno is null)
+            throw new InvalidOperationException("Aluno não encontrado.");
+
+
+        Matricula? matricula = aluno.Matriculas.FirstOrDefault(m => m.Curso.Codigo == codigoCurso);
+
+        if (matricula is null)
+            throw new InvalidOperationException("O aluno não está matriculado neste curso.");
+       
+
+        Disciplina? disciplina = matricula.Curso.Disciplinas.FirstOrDefault(d => d.Codigo == codigoDisciplina);
+
+        if (disciplina is null)
+            throw new InvalidOperationException("A disciplina não pertence a este curso.");
+
+
+        matricula.Boletim.RegistrarNota(disciplina, nota);
     }
 
-    public void ConsultarPessoa()
+    public void ConsultarBoletim(
+        string numeroMatricula,
+        string codigoCurso)
     {
-       for(int i = 0; i < pessoas.Count; i++)
+        Aluno? aluno = _alunos.FirstOrDefault(a => a.NumeroMatricula == numeroMatricula);
+
+        if (aluno is null)
+            throw new InvalidOperationException("Aluno não encontrado.");
+
+        Matricula? matricula = aluno.Matriculas.FirstOrDefault(m => m.Curso.Codigo == codigoCurso);
+
+        if (matricula is null)
+            throw new InvalidOperationException("O aluno não está matriculado neste curso.");
+
+        Curso curso = matricula.Curso;
+
+        Console.WriteLine("========= BOLETIM =========");
+        Console.WriteLine($"Aluno: {aluno.Nome}");
+        Console.WriteLine($"Matrícula: {aluno.NumeroMatricula}");
+        Console.WriteLine($"Curso: {curso.Nome}");
+        Console.WriteLine($"Tipo: {curso.TipoCurso}");
+        Console.WriteLine();
+
+        foreach (Disciplina disciplina in curso.Disciplinas)
         {
-            var pessoa = pessoas[i];
-            if (pessoa == null)
-            {
-                throw new InvalidOperationException("Pessoa não encontrada.");
-            }
+            decimal nota = matricula.Boletim.ObterNota(disciplina);
+
+            string situacao = ObterSituacao(
+                nota,
+                curso.TipoCurso
+            );
+
+            Console.WriteLine($"Disciplina: {disciplina.Nome}");
+            Console.WriteLine($"Nota: {nota}");
+            Console.WriteLine($"Situação: {situacao}");
+            Console.WriteLine();
         }
-        Console.WriteLine("Nome\tCPF\tEmail");
-        foreach (var pessoa in pessoas)
-        {
-            Console.WriteLine($"{pessoa.Nome}\t{pessoa.CPF}\t{pessoa.Email}");
-        }
+
     }
-    
-    public void LancarNota(string numeroMatricula, string codigoCurso, string codigoDisciplina, decimal nota)
+
+    public string ObterSituacao(decimal nota, TipoCurso tipoCurso)
     {
-        for(int i = 0; i < boletins.Count; i++)
+        decimal notaMinima;
+
+        if (tipoCurso == TipoCurso.GRADUACAO)
         {
-            var boletim = boletins[i];
-            if (boletim == null)
+            notaMinima = 7;
+        }
+        else if (tipoCurso == TipoCurso.POS_GRADUACAO)
+        {
+            notaMinima = 8;
+        }
+        else
+        {
+            throw new ArgumentException("Tipo de curso inválido.");
+        }
+
+        return nota >= notaMinima
+            ? "Aprovado"
+            : "Reprovado";
+    }
+
+    public void ConsultarPessoas()
+    {
+        if (_alunos.Count == 0 && _professores.Count == 0)
+        {
+            throw new InvalidOperationException("Não há alunos e professores cadastradas.");
+        }
+
+        Console.WriteLine("========== ALUNOS ==========");
+
+        foreach (Aluno aluno in _alunos)
+        {
+            Console.WriteLine($"Nome: {aluno.Nome}");
+            Console.WriteLine($"CPF: {aluno.CPF}");
+            Console.WriteLine($"E-mail: {aluno.Email}");
+            Console.WriteLine($"Número de matrícula: {aluno.NumeroMatricula}");
+
+            if (aluno.Matriculas.Count == 0)
             {
-                throw new InvalidOperationException("Boletim não encontrado.");
+                Console.WriteLine($"Nenhum curso matriculado para o aluno {aluno.Nome}.");
             }
-        }
-        for(int i = 0; i < cursos.Count; i++)
-        {
-            var curso = cursos[i];
-            if (curso == null)
+            else
             {
-                throw new InvalidOperationException("Curso não encontrado.");
+                Console.WriteLine("Cursos:");
+
+                foreach (Matricula matricula in aluno.Matriculas)
+                {
+                    Console.WriteLine($"- {matricula.Curso.Nome}");
+                }
             }
+
+            Console.WriteLine();
         }
-        for(int i = 0; i < disciplinas.Count; i++)
+
+        Console.WriteLine("======== PROFESSORES ========");
+
+        foreach (Professor professor in _professores)
         {
-            var disciplina = disciplinas[i];
-            if (disciplina == null)
-            {
-                throw new InvalidOperationException("Disciplina não encontrada.");
-            }
-        }
-        if (nota < 0 || nota > 10)
-        {
-            throw new ArgumentOutOfRangeException("Nota deve estar entre 0 e 10.");
-        }
-        if (string.IsNullOrEmpty(numeroMatricula) || string.IsNullOrEmpty(codigoCurso) || string.IsNullOrEmpty(codigoDisciplina))
-        {
-            throw new ArgumentException("Número de matrícula, código do curso e código da disciplina não podem ser nulos ou vazios.");
+            Console.WriteLine($"Nome: {professor.Nome}");
+            Console.WriteLine($"CPF: {professor.CPF}");
+            Console.WriteLine($"E-mail: {professor.Email}");
+            Console.WriteLine($"Registro: {professor.Registro}");
+            Console.WriteLine($"Especialidade: {professor.Especialidade}");
+            Console.WriteLine();
         }
     }
 
