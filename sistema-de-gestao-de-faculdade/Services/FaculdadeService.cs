@@ -1,29 +1,132 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using static System.Console;
 using sistema_de_gestao_de_faculdade.Entity;
 
 public class FaculdadeService
 {
-    private List<Professor> _professores;
-    private List<Disciplina> _disciplinas;
-    private List<Curso> _cursos;
+    private readonly List<Aluno> _alunos;
+    private readonly List<Professor> _professores;
+    private readonly List<Disciplina> _disciplinas;
+    private readonly List<Curso> _cursos;
 
     public FaculdadeService()
     {
-        _cursos = new List<Curso>();
+        _alunos = new List<Aluno>();
         _professores = new List<Professor>();
         _disciplinas = new List<Disciplina>();
+        _cursos = new List<Curso>();
     }
 
-    public void CadastrarCurso(string codigo, string nome, TipoCurso tipoCurso)
+    public void CadastrarAluno(Aluno aluno)
+    {
+        if (_alunos.Any(x => x.NumeroMatricula == aluno.NumeroMatricula))
+        {
+            throw new ArgumentException(
+                $"Número de matrícula {aluno.NumeroMatricula} já cadastrado. " +
+                "Informe um número de matrícula válido."
+            );
+        }
+
+        _alunos.Add(aluno);
+    }
+
+    public void MatricularAlunoCurso(
+        string numeroMatricula,
+        string codigoCurso)
+    {
+        Aluno? aluno = _alunos
+            .FirstOrDefault(x => x.NumeroMatricula == numeroMatricula);
+
+        if (aluno is null)
+        {
+            throw new ArgumentException(
+                $"Aluno com a matrícula {numeroMatricula} não encontrado. " +
+                "Cadastre o aluno antes de matriculá-lo em um curso."
+            );
+        }
+
+        Curso? curso = _cursos
+            .FirstOrDefault(x => x.Codigo == codigoCurso);
+
+        if (curso is null)
+        {
+            throw new ArgumentException(
+                $"Curso com o código {codigoCurso} não encontrado. " +
+                "Cadastre o curso antes de matriculá-lo."
+            );
+        }
+
+        if (aluno.Matriculas.Any(x => x.Curso.Codigo == codigoCurso))
+        {
+            throw new ArgumentException(
+                $"Aluno {aluno.Nome} já está matriculado no curso " +
+                $"{codigoCurso}. Não é possível realizar a matrícula novamente."
+            );
+        }
+
+        Matricula matricula = new Matricula(aluno, curso);
+
+        aluno.AdicionarMatricula(matricula);
+    }
+
+    public void ConsultarMatriculas()
+    {
+        if (_alunos.Count == 0)
+        {
+            throw new ArgumentException(
+                "Não há alunos cadastrados."
+            );
+        }
+
+        foreach (Aluno aluno in _alunos)
+        {
+            Console.WriteLine($"Aluno: {aluno.Nome}");
+            Console.WriteLine($"Matrícula: {aluno.NumeroMatricula}");
+
+            if (!aluno.Matriculas.Any())
+            {
+                Console.WriteLine("Cursos: Nenhum curso matriculado.");
+                Console.WriteLine();
+                continue;
+            }
+
+            foreach (Matricula matricula in aluno.Matriculas)
+            {
+                Console.WriteLine(
+                    $"Curso: {matricula.Curso.Nome}"
+                );
+
+                Console.WriteLine(
+                    $"Código: {matricula.Curso.Codigo}"
+                );
+
+                Console.WriteLine(
+                    $"Tipo: {matricula.Curso.TipoCurso}"
+                );
+
+                Console.WriteLine();
+            }
+        }
+    }
+
+    public void CadastrarCurso(
+        string codigo,
+        string nome,
+        TipoCurso tipoCurso)
     {
         if (_cursos.Any(curso => curso.Codigo == codigo))
         {
-            throw new InvalidOperationException("Curso já cadastrado.");
+            throw new InvalidOperationException(
+                "Curso já cadastrado."
+            );
         }
 
-        Curso curso = new Curso(codigo, nome, tipoCurso);
+        Curso curso = new Curso(
+            codigo,
+            nome,
+            tipoCurso
+        );
 
         _cursos.Add(curso);
     }
@@ -32,17 +135,17 @@ public class FaculdadeService
     {
         if (_cursos.Count == 0)
         {
-            WriteLine("Nenhum curso cadastrado.");
+            Console.WriteLine("Nenhum curso cadastrado.");
             return;
         }
 
         foreach (Curso curso in _cursos)
         {
-            WriteLine("==============================");
-            WriteLine($"Código: {curso.Codigo}");
-            WriteLine($"Nome: {curso.Nome}");
-            WriteLine($"Tipo: {curso.TipoCurso}");
-            WriteLine("==============================");
+            Console.WriteLine("==============================");
+            Console.WriteLine($"Código: {curso.Codigo}");
+            Console.WriteLine($"Nome: {curso.Nome}");
+            Console.WriteLine($"Tipo: {curso.TipoCurso}");
+            Console.WriteLine("==============================");
         }
     }
 
@@ -54,10 +157,18 @@ public class FaculdadeService
         string especialidade)
     {
         if (_professores.Any(p => p.Cpf == cpf))
-            throw new InvalidOperationException("Existe um professor cadastrado com este CPF.");
+        {
+            throw new InvalidOperationException(
+                "Existe um professor cadastrado com este CPF."
+            );
+        }
 
         if (_professores.Any(p => p.Registro == registro))
-            throw new InvalidOperationException("Existe um professor cadastrado com este registro.");
+        {
+            throw new InvalidOperationException(
+                "Existe um professor cadastrado com este registro."
+            );
+        }
 
         Professor professor = new Professor(
             nome,
@@ -77,12 +188,21 @@ public class FaculdadeService
         string registroProfessor)
     {
         if (_disciplinas.Any(d => d.Codigo == codigo))
-            throw new InvalidOperationException("Existe uma disciplina cadastrada com este código.");
+        {
+            throw new InvalidOperationException(
+                "Existe uma disciplina cadastrada com este código."
+            );
+        }
 
-        Professor? professor = _professores.FirstOrDefault(p => p.Registro == registroProfessor);
+        Professor? professor = _professores
+            .FirstOrDefault(p => p.Registro == registroProfessor);
 
         if (professor is null)
-            throw new InvalidOperationException("O professor não está cadastrado no sistema.");
+        {
+            throw new InvalidOperationException(
+                "O professor não está cadastrado no sistema."
+            );
+        }
 
         Disciplina disciplina = new Disciplina(
             codigo,
@@ -102,12 +222,21 @@ public class FaculdadeService
             .FirstOrDefault(c => c.Codigo == codigoCurso);
 
         if (curso is null)
-            throw new InvalidOperationException("O curso não está cadastrado no sistema.");
+        {
+            throw new InvalidOperationException(
+                "O curso não está cadastrado no sistema."
+            );
+        }
 
-        Disciplina? disciplina = _disciplinas.FirstOrDefault(d => d.Codigo == codigoDisciplina);
+        Disciplina? disciplina = _disciplinas
+            .FirstOrDefault(d => d.Codigo == codigoDisciplina);
 
         if (disciplina is null)
-            throw new InvalidOperationException("A disciplina não está cadastrada no sistema.");
+        {
+            throw new InvalidOperationException(
+                "A disciplina não está cadastrada no sistema."
+            );
+        }
 
         curso.AdicionarDisciplina(disciplina);
     }
