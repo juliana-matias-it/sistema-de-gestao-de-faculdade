@@ -8,7 +8,7 @@ namespace sistema_de_gestao_de_faculdade.Entity
     {
         public Aluno Aluno { get; set; }
         public Curso Curso { get; set; }
-        public Boletim Boletim   { get; set; }
+        public Boletim Boletim { get; set; }
 
         public Matricula(Aluno aluno, Curso curso)
         {
