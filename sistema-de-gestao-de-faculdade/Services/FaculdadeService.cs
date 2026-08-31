@@ -25,6 +25,11 @@ public class FaculdadeService
             throw new ArgumentException($"Número de matrícula {aluno.NumeroMatricula} já cadastrado. Informe um número de matrícula válido.");
         }
 
+        if (_alunos.Any(x => x.CPF == aluno.CPF))
+        {
+            throw new ArgumentException($"CPF {aluno.CPF} já cadastrado. Informe um CPF válido.");
+        }
+
         _alunos.Add(aluno);
     }
 
